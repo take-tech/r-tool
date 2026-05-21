@@ -21,9 +21,7 @@ void RToolAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     toolProcessor.prepare(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
 
     toolProcessor.setParameters(
-        *apvts.getRawParameterValue(rtool::param::invertLeft)  > 0.5f,
-        *apvts.getRawParameterValue(rtool::param::swapLR)      > 0.5f,
-        *apvts.getRawParameterValue(rtool::param::invertRight) > 0.5f,
+        *apvts.getRawParameterValue(rtool::param::swap),
         *apvts.getRawParameterValue(rtool::param::volumeDb),
         *apvts.getRawParameterValue(rtool::param::gainDb),
         *apvts.getRawParameterValue(rtool::param::pan),
@@ -61,9 +59,7 @@ void RToolAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
         buffer.clear(ch, 0, buffer.getNumSamples());
 
     toolProcessor.setParameters(
-        *apvts.getRawParameterValue(rtool::param::invertLeft)  > 0.5f,
-        *apvts.getRawParameterValue(rtool::param::swapLR)      > 0.5f,
-        *apvts.getRawParameterValue(rtool::param::invertRight) > 0.5f,
+        *apvts.getRawParameterValue(rtool::param::swap),
         *apvts.getRawParameterValue(rtool::param::volumeDb),
         *apvts.getRawParameterValue(rtool::param::gainDb),
         *apvts.getRawParameterValue(rtool::param::pan),

@@ -6,20 +6,11 @@ namespace rtool::param
     {
         std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
-        parameters.push_back(std::make_unique<juce::AudioParameterBool>(
-            juce::ParameterID { invertLeft, 1 },
-            "L-",
-            false));
-
-        parameters.push_back(std::make_unique<juce::AudioParameterBool>(
-            juce::ParameterID { swapLR, 1 },
-            "Swap L/R",
-            false));
-
-        parameters.push_back(std::make_unique<juce::AudioParameterBool>(
-            juce::ParameterID { invertRight, 1 },
-            "R-",
-            false));
+        parameters.push_back(std::make_unique<juce::AudioParameterFloat>(
+            juce::ParameterID { swap, 1 },
+            "Swap",
+            juce::NormalisableRange<float> { 0.0f, 1.0f, 0.01f },
+            0.0f));
 
         parameters.push_back(std::make_unique<juce::AudioParameterFloat>(
             juce::ParameterID { volumeDb, 1 },

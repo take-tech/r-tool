@@ -4,9 +4,7 @@
 
 namespace rtool::param
 {
-    static constexpr auto invertLeft  = "invertLeft";
-    static constexpr auto swapLR      = "swapLR";
-    static constexpr auto invertRight = "invertRight";
+    static constexpr auto swap        = "swap";
     static constexpr auto volumeDb    = "volumeDb";
     static constexpr auto gainDb      = "gainDb";
     static constexpr auto pan         = "pan";

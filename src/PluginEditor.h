@@ -48,29 +48,24 @@ private:
     RToolAudioProcessor& audioProcessor;
     ranze::ui::Theme theme { ranze::ui::getDefaultTheme() };
 
-    // Top-row toggle buttons
-    juce::TextButton invertLeftButton  { "L-" };
-    juce::TextButton swapLRButton      { "Swap L/R" };
-    juce::TextButton invertRightButton { "R-" };
-    std::unique_ptr<ButtonAttachment> invertLeftAttachment;
-    std::unique_ptr<ButtonAttachment> swapLRAttachment;
-    std::unique_ptr<ButtonAttachment> invertRightAttachment;
-
     // Knobs
     juce::Slider volumeSlider;
     juce::Slider gainSlider;
     juce::Slider panSlider;
     juce::Slider widthSlider;
+    juce::Slider swapSlider;
 
     juce::Label volumeLabel;
     juce::Label gainLabel;
     juce::Label panLabel;
     juce::Label widthLabel;
+    juce::Label swapLabel;
 
     std::unique_ptr<SliderAttachment> volumeAttachment;
     std::unique_ptr<SliderAttachment> gainAttachment;
     std::unique_ptr<SliderAttachment> panAttachment;
     std::unique_ptr<SliderAttachment> widthAttachment;
+    std::unique_ptr<SliderAttachment> swapAttachment;
 
     // Meter
     rtool::gui::MeterComponent meterComponent;

@@ -15,17 +15,6 @@ RToolAudioProcessorEditor::RToolAudioProcessorEditor(RToolAudioProcessor& proces
 {
     setSize(360, 316);
 
-    // --- Toggle buttons ---
-    for (auto* btn : { &invertLeftButton, &swapLRButton, &invertRightButton })
-    {
-        btn->setClickingTogglesState(true);
-        addAndMakeVisible(btn);
-    }
-
-    invertLeftAttachment  = std::make_unique<ButtonAttachment>(audioProcessor.getValueTreeState(), rtool::param::invertLeft,  invertLeftButton);
-    swapLRAttachment      = std::make_unique<ButtonAttachment>(audioProcessor.getValueTreeState(), rtool::param::swapLR,      swapLRButton);
-    invertRightAttachment = std::make_unique<ButtonAttachment>(audioProcessor.getValueTreeState(), rtool::param::invertRight, invertRightButton);
-
     // --- Knobs ---
     auto setupKnob = [this](juce::Slider& s, juce::Label& lbl, const juce::String& text)
     {
@@ -42,6 +31,7 @@ RToolAudioProcessorEditor::RToolAudioProcessorEditor(RToolAudioProcessor& proces
     setupKnob(gainSlider,   gainLabel,   "Gain");
     setupKnob(panSlider,    panLabel,    "Pan");
     setupKnob(widthSlider,  widthLabel,  "Width");
+    setupKnob(swapSlider,   swapLabel,   "Swap");
 
     configureSliderText();
 
@@ -50,6 +40,7 @@ RToolAudioProcessorEditor::RToolAudioProcessorEditor(RToolAudioProcessor& proces
     gainAttachment   = std::make_unique<SliderAttachment>(vts, rtool::param::gainDb,   gainSlider);
     panAttachment    = std::make_unique<SliderAttachment>(vts, rtool::param::pan,       panSlider);
     widthAttachment  = std::make_unique<SliderAttachment>(vts, rtool::param::width,     widthSlider);
+    swapAttachment   = std::make_unique<SliderAttachment>(vts, rtool::param::swap,      swapSlider);
 
     // --- Meter ---
     addAndMakeVisible(meterComponent);
@@ -87,38 +78,26 @@ void RToolAudioProcessorEditor::resized()
     meterComponent.setBounds(meterArea);
     area.removeFromRight(8); // gap
 
-    // --- Button row ---
-    auto buttonRow = area.removeFromTop(32);
-    area.removeFromTop(8);
-
-    const int totalBtnW = buttonRow.getWidth();
-    const int btn1W = 60, btn2W = totalBtnW - 120, btn3W = 60;
-    const int gap   = (totalBtnW - btn1W - btn2W - btn3W) / 2;
-
-    invertLeftButton.setBounds(buttonRow.removeFromLeft(btn1W));
-    buttonRow.removeFromLeft(gap);
-    swapLRButton.setBounds(buttonRow.removeFromLeft(btn2W));
-    buttonRow.removeFromLeft(gap);
-    invertRightButton.setBounds(buttonRow);
-
-    // --- Knob rows: 2 columns each ---
-    auto row1 = area.removeFromTop(105);
-    area.removeFromTop(6);
-    auto row2 = area;
-
-    const int colW = row1.getWidth() / 2;
-
+    // --- Knob rows ---
     auto placeKnob = [&](juce::Rectangle<int> cell, juce::Slider& s, juce::Label& lbl)
     {
-        auto labelRect = cell.removeFromTop(18);
-        lbl.setBounds(labelRect);
+        lbl.setBounds(cell.removeFromTop(18));
         s.setBounds(cell);
     };
 
-    placeKnob(row1.removeFromLeft(colW), volumeSlider, volumeLabel);
-    placeKnob(row1,                      gainSlider,   gainLabel);
-    placeKnob(row2.removeFromLeft(colW), panSlider,    panLabel);
-    placeKnob(row2,                      widthSlider,  widthLabel);
+    // Row 1: Volume | Gain  (2 columns)
+    auto row1  = area.removeFromTop(105);
+    area.removeFromTop(6);
+    const int col2W = row1.getWidth() / 2;
+    placeKnob(row1.removeFromLeft(col2W), volumeSlider, volumeLabel);
+    placeKnob(row1,                       gainSlider,   gainLabel);
+
+    // Row 2: Pan | Width | Swap  (3 columns)
+    auto row2  = area;
+    const int col3W = row2.getWidth() / 3;
+    placeKnob(row2.removeFromLeft(col3W), panSlider,   panLabel);
+    placeKnob(row2.removeFromLeft(col3W), widthSlider, widthLabel);
+    placeKnob(row2,                       swapSlider,  swapLabel);
 }
 
 void RToolAudioProcessorEditor::timerCallback()
@@ -174,6 +153,15 @@ void RToolAudioProcessorEditor::configureSliderText()
     {
         return t.getDoubleValue() / 100.0;
     };
+
+    swapSlider.textFromValueFunction = [](double v) -> juce::String
+    {
+        return juce::String(static_cast<int>(std::round(v * 100.0))) + " %";
+    };
+    swapSlider.valueFromTextFunction = [](const juce::String& t) -> double
+    {
+        return t.getDoubleValue() / 100.0;
+    };
 }
 
 void RToolAudioProcessorEditor::configureThemeButton()
@@ -225,20 +213,11 @@ void RToolAudioProcessorEditor::applyTheme()
     const auto tid = ranze::ui::getThemeIdForIndex(idx);
     theme = ranze::ui::getThemeForIndex(idx);
 
-    // Toggle buttons
-    for (auto* btn : { &invertLeftButton, &swapLRButton, &invertRightButton })
-    {
-        btn->setColour(juce::TextButton::buttonColourId,   theme.control);
-        btn->setColour(juce::TextButton::buttonOnColourId, theme.accent);
-        btn->setColour(juce::TextButton::textColourOffId,  theme.text);
-        btn->setColour(juce::TextButton::textColourOnId,   theme.background);
-    }
-
     // Knobs and labels
-    for (auto* s : { &volumeSlider, &gainSlider, &panSlider, &widthSlider })
+    for (auto* s : { &volumeSlider, &gainSlider, &panSlider, &widthSlider, &swapSlider })
         ranze::ui::applyRotarySliderTheme(*s, theme, tid);
 
-    for (auto* lbl : { &volumeLabel, &gainLabel, &panLabel, &widthLabel })
+    for (auto* lbl : { &volumeLabel, &gainLabel, &panLabel, &widthLabel, &swapLabel })
         ranze::ui::applyLabelTheme(*lbl, theme);
 
     meterComponent.setTheme(theme);

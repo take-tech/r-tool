@@ -12,9 +12,7 @@ namespace dsp
         void prepare(double sampleRate, int samplesPerBlock, int numChannels);
         void reset();
         void setParameters(
-            bool invertLeft,
-            bool swapLR,
-            bool invertRight,
+            float swap,
             float volumeDb,
             float gainDb,
             float pan,
@@ -25,18 +23,11 @@ namespace dsp
         double sampleRate { 44100.0 };
         int numChannels { 0 };
 
-        bool paramInvertLeft  { false };
-        bool paramSwapLR      { false };
-        bool paramInvertRight { false };
-        float paramVolumeDb   { 0.0f };
-        float paramGainDb     { 0.0f };
-        float paramPan        { 0.0f };
-        float paramWidth      { 1.0f };
-
         juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> gainSmoothed;
         juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> panLeftSmoothed;
         juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> panRightSmoothed;
         juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> widthSmoothed;
+        juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> swapSmoothed;
 
         static float computeGainLinear(float volumeDb, float gainDb) noexcept;
     };
