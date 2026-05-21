@@ -1,0 +1,6 @@
+[submodule "external/juce"]
+	path = external/juce
+	url = https://github.com/juce-framework/JUCE.git
+[submodule "external/ranze-plugin-ui"]
+	path = external/ranze-plugin-ui
+	url = https://github.com/take-tech/ranze-plugin-ui.git
