@@ -1,0 +1,18 @@
+build/
+cmake-build-*/
+.DS_Store
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+
+# Plugin build artifacts
+*.vst3/
+*.component/
+*.aaxplugin/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Local only
+.claude/
